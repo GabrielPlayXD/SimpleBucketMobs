@@ -12,10 +12,12 @@ java {
 
 repositories {
     maven("https://repo.papermc.io/repository/maven-public/")
+    maven("https://repo.glaremasters.me/repository/bloodshot")
 }
 
 dependencies {
     paperweight.paperDevBundle("1.21.4-R0.1-SNAPSHOT")
+    compileOnly("com.griefdefender:api:2.1.1-SNAPSHOT")
 }
 
 tasks {

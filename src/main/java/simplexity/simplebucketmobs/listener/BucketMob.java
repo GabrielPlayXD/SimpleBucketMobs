@@ -41,6 +41,7 @@ import simplexity.simplebucketmobs.util.Message;
 import simplexity.simplebucketmobs.util.Permission;
 
 import java.io.IOException;
+import org.bukkit.Bukkit;
 
 public class BucketMob implements Listener {
 
@@ -67,6 +68,13 @@ public class BucketMob implements Listener {
             player.sendMessage(Message.ERROR_BUCKET_NO_PERMISSION.getParsedMessage());
             return;
         }
+
+        if (Bukkit.getPluginManager().getPlugin("GriefDefender") != null) {
+            if (!checkGriefDefenderBucket(player, entity)) {
+                return;
+            }
+        }
+
         // TODO: Health Threshold Requirement / Health Check Bypass Permission (Per Mob)
         // TODO: Check disallowed attributes.
         ItemStack bucket = player.getEquipment().getItemInMainHand();
@@ -129,6 +137,12 @@ public class BucketMob implements Listener {
         ItemStack bucket = player.getEquipment().getItemInMainHand();
         if (bucket.getType() != Material.BUCKET) return;
         if (!bucket.getItemMeta().getPersistentDataContainer().has(mobNBTKey)) return;
+
+        if (Bukkit.getPluginManager().getPlugin("GriefDefender") != null) {
+            if (!checkGriefDefenderUnbucket(player, location, bucket)) {
+                return;
+            }
+        }
 
         String serializedNbt = bucket.getItemMeta().getPersistentDataContainer().get(mobNBTKey, PersistentDataType.STRING);
 
@@ -249,4 +263,11 @@ public class BucketMob implements Listener {
         return interactionPoint;
     }
 
+    private boolean checkGriefDefenderBucket(Player player, Entity entity) {
+        return simplexity.simplebucketmobs.util.GriefDefenderHook.canBucket(player, entity);
+    }
+
+    private boolean checkGriefDefenderUnbucket(Player player, Location location, ItemStack bucket) {
+        return simplexity.simplebucketmobs.util.GriefDefenderHook.canUnbucket(player, location, bucket);
+    }
 }

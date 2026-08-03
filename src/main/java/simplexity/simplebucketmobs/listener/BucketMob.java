@@ -185,7 +185,7 @@ public class BucketMob implements Listener {
      */
     private CompoundTag serializeNBT(LivingEntity e) {
         CompoundTag tag = new CompoundTag();
-        ((CraftLivingEntity) e).getHandle().saveWithoutId(tag);
+        ((CraftLivingEntity) e).getHandle().save(tag);
         return tag;
     }
 
@@ -207,7 +207,7 @@ public class BucketMob implements Listener {
         EntityType mobType = EntityType.valueOf(id);
         Entity entity = location.getWorld().spawnEntity(location, mobType, CreatureSpawnEvent.SpawnReason.CUSTOM, spawned -> {
             CompoundTag newLoc = new CompoundTag();
-            ((CraftLivingEntity) spawned).getHandle().saveWithoutId(newLoc);
+            ((CraftLivingEntity) spawned).getHandle().save(newLoc);
             tag.put("Motion", newLoc.get("Motion"));
             tag.put("Pos", newLoc.get("Pos"));
             tag.put("Rotation", newLoc.get("Rotation"));

@@ -49,9 +49,10 @@ public class InteractListeners implements Listener {
                     Placeholder.parsed("prefix", Message.PREFIX.getMessage()));
             return;
         }
+        if (ConfigHandler.getInstance().isSneakRequired(type) && !player.isSneaking()) return;
+        if (!simplexity.simplebucketmobs.integration.GriefDefenderHook.canInteractWithEntity(player, livingEntity)) return;
         // From here the plugin owns the interaction; cancel so vanilla can't fire (e.g. cow milking sound)
         interactEvent.setCancelled(true);
-        if (ConfigHandler.getInstance().isSneakRequired(type) && !player.isSneaking()) return;
         if (livingEntity instanceof Monster monster) {
             LivingEntity target = monster.getTarget();
             // isAggressive() is unreliable for mobs like Slime/Spider — targeting the player is sufficient
@@ -64,6 +65,7 @@ public class InteractListeners implements Listener {
         ItemStack bucketItem = BucketHandler.getMobBucket(livingEntity);
         BucketHandler.addMobBucketToInventory(player, bucketItem);
         player.playSound(Sound.sound(Key.key("minecraft", "item.bucket.fill_fish"), Sound.Source.PLAYER, 1.0f, 1.0f));
+        simplexity.simplebucketmobs.integration.CoreProtectHook.logCapture(player, livingEntity);
         livingEntity.remove();
     }
 
@@ -81,6 +83,9 @@ public class InteractListeners implements Listener {
         if (block == null || block.getType().equals(Material.AIR)) return;
         if (!(itemStack.getType().equals(Material.BUCKET) || itemStack.getType().equals(ConfigHandler.getInstance().getMobBucketMaterial()))) return;
         if (!(bucketPdc.has(newMobTag) || bucketPdc.has(legacyMobTag))) return;
+        org.bukkit.Location targetLoc = block.getLocation().toCenterLocation();
+        if (!block.isPassable()) targetLoc = targetLoc.add(0, 1, 0);
+        if (!simplexity.simplebucketmobs.integration.GriefDefenderHook.canReleaseAt(player, targetLoc)) return;
         interactEvent.setCancelled(true);
         if (bucketPdc.has(newMobTag)) EntityHandler.handleMobSpawn(player, itemStack, block);
         if (bucketPdc.has(legacyMobTag)) EntityHandler.handleLegacyMobSpawn(player, itemStack, block);

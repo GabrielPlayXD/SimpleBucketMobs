@@ -6,3 +6,11 @@ description: "Shove your mobs into buckets like Axolotls! :D"
 authors:
   - Rhythmic
   - Peashooter101
+dependencies:
+  server:
+    GriefDefender:
+      required: false
+      load: BEFORE
+    CoreProtect:
+      required: false
+      load: BEFORE

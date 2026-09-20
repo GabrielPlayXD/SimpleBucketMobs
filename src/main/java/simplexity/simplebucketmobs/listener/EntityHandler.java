@@ -61,6 +61,8 @@ public class EntityHandler {
             setNmsPosition(livingEntity, location);
             location.getWorld().addEntity(livingEntity);
             player.getInventory().setItemInMainHand(new ItemStack(Material.BUCKET));
+            String mobName = livingEntity.customName() != null ? net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText().serialize(livingEntity.customName()) : livingEntity.getType().name();
+            simplexity.simplebucketmobs.integration.CoreProtectHook.logRelease(player, location, livingEntity.getType().name() + " (" + mobName + ")");
             pleaseStopDuplicatingMobsThanks.remove(itemStack);
         }, 2L);
     }
@@ -74,8 +76,10 @@ public class EntityHandler {
             Location location = block.getLocation().toCenterLocation();
             if (!block.isPassable()) location = location.add(0, 1, 0);
             EntitySnapshot entitySnapshot = Bukkit.getEntityFactory().createEntitySnapshot(nbt);
-            entitySnapshot.createEntity(location);
+            Entity spawnedEntity = entitySnapshot.createEntity(location);
             player.getInventory().setItemInMainHand(new ItemStack(Material.BUCKET));
+            String mobName = spawnedEntity != null && spawnedEntity.customName() != null ? net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText().serialize(spawnedEntity.customName()) : (spawnedEntity != null ? spawnedEntity.getType().name() : "Legacy Mob");
+            simplexity.simplebucketmobs.integration.CoreProtectHook.logRelease(player, location, mobName);
             pleaseStopDuplicatingMobsThanks.remove(itemStack);
         }, 2L);
     }
